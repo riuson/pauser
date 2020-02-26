@@ -110,7 +110,7 @@ namespace Pauser.UI {
             }
         }
 
-        private void SaveSettings() {
+        public void SaveSettings() {
             var list = this._filters.ToArray();
             IFilterProvider filterProvider = new FilterProvider();
             filterProvider.ToStorage(list);

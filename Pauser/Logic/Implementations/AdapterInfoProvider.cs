@@ -6,7 +6,7 @@ using System.Management;
 using System.Windows.Forms;
 
 namespace Pauser.Logic.Implementations {
-    public class AdapterProvider : IAdapterInfoProvider {
+    public class AdapterInfoProvider : IAdapterInfoProvider {
         public IEnumerable<IAdapterInfo> FromStorage() => Saved<Options>.Instance.IAdapters;
 
         public void ToStorage(IEnumerable<IAdapterInfo> list) {

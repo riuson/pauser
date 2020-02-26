@@ -1,7 +1,10 @@
 ﻿using System;
 using System.Drawing;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Pauser.Logic.Implementations;
+using Pauser.Logic.Interfaces;
 using Message = System.Tuple<int, string>;
 
 namespace Pauser.UI {
@@ -37,7 +40,28 @@ namespace Pauser.UI {
         }
 
         private void Sequence() {
-            throw new NotImplementedException();
+            IAdapterInfoProvider adapterInfoProvider = new AdapterInfoProvider();
+            IAdapterControl adapterControl = new AdapterControl();
+            IFilterProvider filterProvider = new FilterProvider();
+            IProcessProvider processProvider = new ProcessProvider();
+            IProcessControl processControl = new ProcessControl();
+
+            var filters = filterProvider.FromStorage();
+            var processInfos = processProvider.Find(filters);
+            processControl.Suspend(processInfos);
+            var adapterInfos = adapterInfoProvider.FromStorage();
+
+            foreach (var adapterInfo in adapterInfos) {
+                adapterControl.Disable(adapterInfo);
+            }
+
+            processControl.Resume(processInfos);
+
+            Thread.Sleep(10000);
+
+            foreach (var adapterInfo in adapterInfos) {
+                adapterControl.Enable(adapterInfo);
+            }
         }
 
         private void ProgressHandler(Message msg) {

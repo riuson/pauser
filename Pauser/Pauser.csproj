@@ -51,7 +51,7 @@
   <ItemGroup>
     <Compile Include="Logic\Implementations\AdapterInfo.cs" />
     <Compile Include="Logic\Implementations\AdapterControl.cs" />
-    <Compile Include="Logic\Implementations\AdapterProvider.cs" />
+    <Compile Include="Logic\Implementations\AdapterInfoProvider.cs" />
     <Compile Include="Logic\Implementations\Filter.cs" />
     <Compile Include="Logic\Implementations\FilterProvider.cs" />
     <Compile Include="Logic\Implementations\Options.cs" />

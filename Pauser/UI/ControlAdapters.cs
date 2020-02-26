@@ -35,7 +35,7 @@ namespace Pauser.UI {
         }
 
         private void FillList() {
-            IAdapterInfoProvider adapterProvider = new AdapterProvider();
+            IAdapterInfoProvider adapterProvider = new AdapterInfoProvider();
             var systemAdapters = adapterProvider.FromSystem();
             this._adapters.Clear();
 
@@ -93,7 +93,7 @@ namespace Pauser.UI {
             this._adapters.Where(x => x.Selected).ToArray();
 
         private void LoadSettings() {
-            IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
+            IAdapterInfoProvider adapterInfoProvider = new AdapterInfoProvider();
             var adapters = adapterInfoProvider.FromStorage();
             var ids = adapters.Select(x => x.DeviceId).ToArray();
 
@@ -102,8 +102,8 @@ namespace Pauser.UI {
             }
         }
 
-        private void SaveSettings() {
-            IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
+        public void SaveSettings() {
+            IAdapterInfoProvider adapterInfoProvider = new AdapterInfoProvider();
             adapterInfoProvider.ToStorage(this.CollectSelectedAdapters());
         }
 

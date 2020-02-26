@@ -14,6 +14,8 @@ namespace Pauser.UI {
             this.CreateProcessesUI();
             this.CreateCombinedUI();
 
+            this.tabControlMain.Selected += this.TabControlMain_Selected;
+
             // register the event that is fired after the key press.
             //_hook.KeyPressed += new EventHandler<KeyPressedEventArgs>(hook_KeyPressed);
             // register the control + alt + F12 combination as hot key.
@@ -26,7 +28,7 @@ namespace Pauser.UI {
 
         private void CreateNetworksUI() {
             var page = new TabPage("Network Adapters");
-            this.tabControl1.TabPages.Add(page);
+            this.tabControlMain.TabPages.Add(page);
             this._controlAdapters = new ControlAdapters();
             page.Controls.Add(this._controlAdapters);
             this._controlAdapters.Dock = DockStyle.Fill;
@@ -34,7 +36,7 @@ namespace Pauser.UI {
 
         private void CreateProcessesUI() {
             var page = new TabPage("Processes");
-            this.tabControl1.TabPages.Add(page);
+            this.tabControlMain.TabPages.Add(page);
             this._controlProcesses = new ControlProcesses();
             page.Controls.Add(this._controlProcesses);
             this._controlProcesses.Dock = DockStyle.Fill;
@@ -42,10 +44,19 @@ namespace Pauser.UI {
 
         private void CreateCombinedUI() {
             var page = new TabPage("Batch");
-            this.tabControl1.TabPages.Add(page);
+            this.tabControlMain.TabPages.Add(page);
             this._controlCombined = new ControlCombined();
             page.Controls.Add(this._controlCombined);
             this._controlCombined.Dock = DockStyle.Fill;
+        }
+
+        private void TabControlMain_Selected(object sender, TabControlEventArgs e) {
+            if (e.Action == TabControlAction.Selected) {
+                if (e.TabPageIndex == 2) {
+                    this._controlAdapters.SaveSettings();
+                    this._controlProcesses.SaveSettings();
+                }
+            }
         }
     }
 }
