@@ -20,10 +20,15 @@ namespace Pauser.UI {
                 AllowRemove = true,
                 AllowEdit = true
             };
+            this._filters.AddingNew += this._filters_AddingNew;
             this._processes = new BindingList<IProcessInfo>();
             this.CreateUI();
             this.LoadSettings();
             this.FillProcesses();
+        }
+
+        private void _filters_AddingNew(object sender, AddingNewEventArgs e) {
+            e.NewObject = new Filter();
         }
 
         private void BeforeDisposing() => this.SaveSettings();
