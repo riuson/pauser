@@ -74,20 +74,20 @@
             // ColumnSelection
             // 
             this.ColumnSelection.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.ColumnSelection.DataPropertyName = "Selection";
+            this.ColumnSelection.DataPropertyName = "Selected";
             this.ColumnSelection.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.ColumnSelection.HeaderText = "Selection";
+            this.ColumnSelection.HeaderText = "Selected";
             this.ColumnSelection.Name = "ColumnSelection";
-            this.ColumnSelection.Width = 57;
+            this.ColumnSelection.Width = 55;
             // 
             // ColumnDeviceId
             // 
             this.ColumnDeviceId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
             this.ColumnDeviceId.DataPropertyName = "DeviceId";
-            this.ColumnDeviceId.HeaderText = "DeviceID";
+            this.ColumnDeviceId.HeaderText = "DeviceId";
             this.ColumnDeviceId.Name = "ColumnDeviceId";
             this.ColumnDeviceId.ReadOnly = true;
-            this.ColumnDeviceId.Width = 77;
+            this.ColumnDeviceId.Width = 75;
             // 
             // ColumnNetConnectionId
             // 
@@ -132,11 +132,11 @@
 
         #endregion
         private System.Windows.Forms.DataGridView dataGridViewAdapters;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnSelection;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDeviceId;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnNetConnectionId;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnDescription;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

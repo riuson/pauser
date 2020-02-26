@@ -3,6 +3,7 @@ using Pauser.Logic.Interfaces;
 using Pauser.Properties;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
@@ -10,13 +11,13 @@ using System.Windows.Forms;
 
 namespace Pauser.UI {
     public partial class ControlAdapters : UserControl {
-        private readonly DataTable _table;
+        private readonly BindingList<AdapterInfoItem> _adapters;
 
         public ControlAdapters() {
             this.InitializeComponent();
 
-            this._table = this.CreateTable();
-            this.FillTable(this._table);
+            this._adapters = new BindingList<AdapterInfoItem>();
+            this.FillList();
             this.CreateUI();
             this.LoadSettings();
         }
@@ -33,18 +34,15 @@ namespace Pauser.UI {
             return result;
         }
 
-        private void FillTable(DataTable table) {
+        private void FillList() {
             IAdapterInfoProvider adapterProvider = new AdapterProvider();
             var systemAdapters = adapterProvider.FromSystem();
+            this._adapters.Clear();
 
             foreach (var adapter in systemAdapters) {
-                var row = table.NewRow();
-                row["DeviceId"] = adapter.DeviceId;
-                row["Name"] = adapter.Name;
-                row["NetConnectionID"] = adapter.NetConnectionId;
-                row["Description"] = adapter.Description;
-                row["Selection"] = false;
-                table.Rows.Add(row);
+                this._adapters.Add(new AdapterInfoItem(adapter) {
+                    Selected = false
+                });
             }
         }
 
@@ -70,7 +68,7 @@ namespace Pauser.UI {
             this.tableLayoutPanel1.Controls.Add(commandDisable, 1, 1);
 
             this.dataGridViewAdapters.AutoGenerateColumns = false;
-            this.dataGridViewAdapters.DataSource = this._table;
+            this.dataGridViewAdapters.DataSource = this._adapters;
         }
 
         private void EnableAdapters(object sender, EventArgs e) {
@@ -91,36 +89,38 @@ namespace Pauser.UI {
             }
         }
 
-        private IEnumerable<IAdapterInfo> CollectSelectedAdapters() {
-            var result = new List<IAdapterInfo>();
-
-            foreach (DataRow row in this._table.Rows) {
-                if (Convert.ToBoolean(row["Selection"])) {
-                    result.Add(new AdapterInfo() {
-                        Name = Convert.ToString(row["Name"]),
-                        Description = Convert.ToString(row["Description"]),
-                        DeviceId = Convert.ToString(row["DeviceId"]),
-                        NetConnectionId = Convert.ToString(row["NetConnectionId"]),
-                    });
-                }
-            }
-
-            return result;
-        }
+        private IEnumerable<IAdapterInfo> CollectSelectedAdapters() =>
+            this._adapters.Where(x => x.Selected).ToArray();
 
         private void LoadSettings() {
             IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
             var adapters = adapterInfoProvider.FromStorage();
             var ids = adapters.Select(x => x.DeviceId).ToArray();
 
-            foreach (DataRow row in this._table.Rows) {
-                row["Selection"] = ids.Contains(Convert.ToString(row["DeviceId"]));
+            foreach (var item in this._adapters) {
+                item.Selected = ids.Contains(Convert.ToString(item.DeviceId));
             }
         }
 
         private void SaveSettings() {
             IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
             adapterInfoProvider.ToStorage(this.CollectSelectedAdapters());
+        }
+
+        private class AdapterInfoItem : IAdapterInfo {
+            public AdapterInfoItem(IAdapterInfo info) {
+                this.Name = info.Name;
+                this.Description = info.Description;
+                this.DeviceId = info.DeviceId;
+                this.NetConnectionId = info.NetConnectionId;
+                this.Selected = false;
+            }
+
+            public string Name { get; set; }
+            public string Description { get; set; }
+            public string DeviceId { get; set; }
+            public string NetConnectionId { get; set; }
+            public bool Selected { get; set; }
         }
     }
 }

@@ -25,13 +25,13 @@
         /// </summary>
         private void InitializeComponent() {
             this.dataGridViewFilters = new System.Windows.Forms.DataGridView();
-            this.ColumnSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
-            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridViewResults = new System.Windows.Forms.DataGridView();
             this.ColumnProcessName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ColumnFileName = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.ColumnSelection = new System.Windows.Forms.DataGridViewCheckBoxColumn();
+            this.ColumnName = new System.Windows.Forms.DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridViewFilters)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -52,23 +52,8 @@
             this.dataGridViewFilters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewFilters.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewFilters.Name = "dataGridViewFilters";
-            this.dataGridViewFilters.Size = new System.Drawing.Size(823, 208);
+            this.dataGridViewFilters.Size = new System.Drawing.Size(823, 207);
             this.dataGridViewFilters.TabIndex = 2;
-            // 
-            // ColumnSelection
-            // 
-            this.ColumnSelection.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
-            this.ColumnSelection.DataPropertyName = "Selection";
-            this.ColumnSelection.HeaderText = "Selection";
-            this.ColumnSelection.Name = "ColumnSelection";
-            this.ColumnSelection.Width = 57;
-            // 
-            // ColumnName
-            // 
-            this.ColumnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
-            this.ColumnName.DataPropertyName = "Name";
-            this.ColumnName.HeaderText = "Name";
-            this.ColumnName.Name = "ColumnName";
             // 
             // tableLayoutPanel1
             // 
@@ -103,7 +88,7 @@
             this.splitContainer1.Panel2.Controls.Add(this.dataGridViewResults);
             this.tableLayoutPanel1.SetRowSpan(this.splitContainer1, 4);
             this.splitContainer1.Size = new System.Drawing.Size(823, 417);
-            this.splitContainer1.SplitterDistance = 208;
+            this.splitContainer1.SplitterDistance = 207;
             this.splitContainer1.TabIndex = 4;
             // 
             // dataGridViewResults
@@ -119,7 +104,7 @@
             this.dataGridViewResults.Dock = System.Windows.Forms.DockStyle.Fill;
             this.dataGridViewResults.Location = new System.Drawing.Point(0, 0);
             this.dataGridViewResults.Name = "dataGridViewResults";
-            this.dataGridViewResults.Size = new System.Drawing.Size(823, 205);
+            this.dataGridViewResults.Size = new System.Drawing.Size(823, 206);
             this.dataGridViewResults.TabIndex = 2;
             // 
             // ColumnProcessName
@@ -138,6 +123,21 @@
             this.ColumnFileName.HeaderText = "File Name";
             this.ColumnFileName.Name = "ColumnFileName";
             this.ColumnFileName.ReadOnly = true;
+            // 
+            // ColumnSelection
+            // 
+            this.ColumnSelection.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.AllCells;
+            this.ColumnSelection.DataPropertyName = "Enabled";
+            this.ColumnSelection.HeaderText = "Enabled";
+            this.ColumnSelection.Name = "ColumnSelection";
+            this.ColumnSelection.Width = 52;
+            // 
+            // ColumnName
+            // 
+            this.ColumnName.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill;
+            this.ColumnName.DataPropertyName = "Value";
+            this.ColumnName.HeaderText = "Process Name";
+            this.ColumnName.Name = "ColumnName";
             // 
             // ControlProcesses
             // 
@@ -162,11 +162,11 @@
 
         private System.Windows.Forms.DataGridView dataGridViewFilters;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnSelection;
-        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.DataGridView dataGridViewResults;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnProcessName;
         private System.Windows.Forms.DataGridViewTextBoxColumn ColumnFileName;
+        private System.Windows.Forms.DataGridViewCheckBoxColumn ColumnSelection;
+        private System.Windows.Forms.DataGridViewTextBoxColumn ColumnName;
     }
 }

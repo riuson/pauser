@@ -1,5 +1,4 @@
 ﻿using Pauser.Logic.Interfaces;
-using Pauser.UI;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,10 +7,10 @@ using System.Windows.Forms;
 
 namespace Pauser.Logic.Implementations {
     public class AdapterProvider : IAdapterInfoProvider {
-        public IEnumerable<IAdapterInfo> FromStorage() => Saved<Options>.Instance.Adapters;
+        public IEnumerable<IAdapterInfo> FromStorage() => Saved<Options>.Instance.IAdapters;
 
         public void ToStorage(IEnumerable<IAdapterInfo> list) {
-            Saved<Options>.Instance.Adapters = list.OfType<AdapterInfo>().ToArray();
+            Saved<Options>.Instance.IAdapters = list?.ToArray() ?? new IAdapterInfo[] { };
             Saved<Options>.Save();
         }
 
