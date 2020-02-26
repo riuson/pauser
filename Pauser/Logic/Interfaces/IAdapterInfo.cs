@@ -1,5 +1,5 @@
 ﻿namespace Pauser.Logic.Interfaces {
-    public interface IAdapter {
+    public interface IAdapterInfo {
         string Name { get; }
         string Description { get; }
         string DeviceId { get; }

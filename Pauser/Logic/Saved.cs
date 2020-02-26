@@ -4,7 +4,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace Pauser.UI {
+namespace Pauser.Logic {
     /// <summary>
     /// Singleton class to load/save settings in xml format.
     /// </summary>

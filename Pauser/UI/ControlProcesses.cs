@@ -1,8 +1,9 @@
-﻿using Pauser.Properties;
+﻿using Pauser.Logic.Implementations;
+using Pauser.Logic.Interfaces;
+using Pauser.Properties;
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -39,14 +40,17 @@ namespace Pauser.UI {
         }
 
         private void FillResults(DataTable tableFilters, DataTable tableResults) {
-            var processes = this.FindProcesses(tableFilters);
+            var filters = this.CollectFilters(tableFilters);
+            IProcessProvider processProvider = new ProcessProvider();
+
+            var processInfos = processProvider.Find(filters);
 
             tableResults.Rows.Clear();
 
-            foreach (var process in processes) {
+            foreach (var processInfo in processInfos) {
                 var row = tableResults.NewRow();
-                row["ProcessName"] = process.ProcessName;
-                row["FileName"] = process.MainModule?.FileName;
+                row["ProcessName"] = processInfo.ProcessName;
+                row["FileName"] = processInfo.FileName;
                 tableResults.Rows.Add(row);
             }
         }
@@ -88,22 +92,15 @@ namespace Pauser.UI {
             this.dataGridViewResults.DataSource = this._tableResults;
         }
 
-        private Process[] FindProcesses(DataTable tableFilters) {
-            var filters = CollectFilters(tableFilters);
-            var a = Process.GetProcesses();
-            var processes = Process.GetProcesses()
-                .Where(x => filters.Contains(x.ProcessName))
-                .ToArray();
-
-            return processes;
-        }
-
-        private static List<string> CollectFilters(DataTable tableFilters) {
-            var filters = new List<string>();
+        private IEnumerable<IFilter> CollectFilters(DataTable tableFilters) {
+            var filters = new List<IFilter>();
 
             foreach (DataRow tableFiltersRow in tableFilters.Rows) {
                 if (Convert.ToBoolean(tableFiltersRow["Selection"])) {
-                    filters.Add(Convert.ToString(tableFiltersRow["Name"]));
+                    filters.Add(new Filter() {
+                        Value = Convert.ToString(tableFiltersRow["Name"]),
+                        Enabled = Convert.ToBoolean(tableFiltersRow["Selection"]),
+                    });
                 }
             }
 
@@ -111,45 +108,47 @@ namespace Pauser.UI {
         }
 
         public void Suspend() {
-            var processes = this.FindProcesses(this._tableFitlers);
-
-            foreach (var process in processes) {
-                Utils.Processes.SuspendProcess(process);
-            }
+            var filters = this.CollectFilters(this._tableFitlers);
+            IProcessControl processControl = new ProcessControl();
+            IProcessProvider processProvider = new ProcessProvider();
+            var processInfos = processProvider.Find(filters);
+            processControl.Suspend(processInfos);
         }
 
         public void Resume() {
-            var processes = this.FindProcesses(this._tableFitlers);
-
-            foreach (var process in processes) {
-                Utils.Processes.ResumeProcess(process);
-            }
+            var filters = this.CollectFilters(this._tableFitlers);
+            IProcessControl processControl = new ProcessControl();
+            IProcessProvider processProvider = new ProcessProvider();
+            var processInfos = processProvider.Find(filters);
+            processControl.Resume(processInfos);
         }
 
         private void LoadSettings(DataTable table) {
-            var filters = Saved<Options>.Instance.ProcessFilters;
+            IFilterProvider filterProvider = new FilterProvider();
+            var filters = filterProvider.FromStorage();
+
             table.Rows.Clear();
 
             foreach (var filter in filters) {
                 var row = table.NewRow();
-                row["Name"] = filter.Name;
-                row["Selection"] = filter.Selected;
+                row["Name"] = filter.Value;
+                row["Selection"] = filter.Enabled;
                 table.Rows.Add(row);
             }
         }
 
         private void SaveSettings(DataTable table) {
-            var list = new List<ProcessFilter>();
+            var list = new List<IFilter>();
 
             foreach (DataRow row in table.Rows) {
-                list.Add(new ProcessFilter() {
-                    Name = Convert.ToString(row["Name"]),
-                    Selected = Convert.ToBoolean(row["Selection"])
+                list.Add(new Filter() {
+                    Value = Convert.ToString(row["Name"]),
+                    Enabled = Convert.ToBoolean(row["Selection"])
                 });
             }
 
-            Saved<Options>.Instance.ProcessFilters = list.ToArray();
-            Saved<Options>.Save();
+            IFilterProvider filterProvider = new FilterProvider();
+            filterProvider.ToStorage(list);
         }
     }
 }

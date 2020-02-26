@@ -1,5 +1,6 @@
-﻿using Pauser.Properties;
-using Pauser.Utils;
+﻿using Pauser.Logic.Implementations;
+using Pauser.Logic.Interfaces;
+using Pauser.Properties;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -33,14 +34,16 @@ namespace Pauser.UI {
         }
 
         private void FillTable(DataTable table) {
-            var adapters = Network.GetAdapters();
+            IAdapterInfoProvider adapterProvider = new AdapterProvider();
+            var systemAdapters = adapterProvider.FromSystem();
 
-            foreach (var adapter in adapters) {
+            foreach (var adapter in systemAdapters) {
                 var row = table.NewRow();
                 row["DeviceId"] = adapter.DeviceId;
                 row["Name"] = adapter.Name;
                 row["NetConnectionID"] = adapter.NetConnectionId;
                 row["Description"] = adapter.Description;
+                row["Selection"] = false;
                 table.Rows.Add(row);
             }
         }
@@ -72,26 +75,33 @@ namespace Pauser.UI {
 
         private void EnableAdapters(object sender, EventArgs e) {
             var adapters = this.CollectSelectedAdapters();
+            IAdapterControl adapterControl = new AdapterControl();
 
             foreach (var adapter in adapters) {
-                Network.EnableAdapter(adapter);
+                adapterControl.Enable(adapter);
             }
         }
 
         private void DisableAdapters(object sender, EventArgs e) {
             var adapters = this.CollectSelectedAdapters();
+            IAdapterControl adapterControl = new AdapterControl();
 
             foreach (var adapter in adapters) {
-                Network.DisableAdapter(adapter);
+                adapterControl.Disable(adapter);
             }
         }
 
-        private IEnumerable<string> CollectSelectedAdapters() {
-            var result = new List<string>();
+        private IEnumerable<IAdapterInfo> CollectSelectedAdapters() {
+            var result = new List<IAdapterInfo>();
 
             foreach (DataRow row in this._table.Rows) {
                 if (Convert.ToBoolean(row["Selection"])) {
-                    result.Add(Convert.ToString(row["DeviceId"]));
+                    result.Add(new AdapterInfo() {
+                        Name = Convert.ToString(row["Name"]),
+                        Description = Convert.ToString(row["Description"]),
+                        DeviceId = Convert.ToString(row["DeviceId"]),
+                        NetConnectionId = Convert.ToString(row["NetConnectionId"]),
+                    });
                 }
             }
 
@@ -99,18 +109,18 @@ namespace Pauser.UI {
         }
 
         private void LoadSettings() {
-            var adapters = Saved<Options>.Instance.NetworkAdapters;
+            IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
+            var adapters = adapterInfoProvider.FromStorage();
+            var ids = adapters.Select(x => x.DeviceId).ToArray();
 
             foreach (DataRow row in this._table.Rows) {
-                if (adapters.Contains(Convert.ToString(row["DeviceId"]))) {
-                    row["Selection"] = true;
-                }
+                row["Selection"] = ids.Contains(Convert.ToString(row["DeviceId"]));
             }
         }
 
         private void SaveSettings() {
-            Saved<Options>.Instance.NetworkAdapters = this.CollectSelectedAdapters().ToArray();
-            Saved<Options>.Save();
+            IAdapterInfoProvider adapterInfoProvider = new AdapterProvider();
+            adapterInfoProvider.ToStorage(this.CollectSelectedAdapters());
         }
     }
 }

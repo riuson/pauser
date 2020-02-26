@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Pauser.Logic.Interfaces;
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace Pauser.Utils {
-    public class Processes {
+namespace Pauser.Logic.Implementations {
+    public class ProcessControl : IProcessControl {
         [Flags]
         private enum ThreadAccess : int {
             TERMINATE = (0x0001),
@@ -29,9 +31,22 @@ namespace Pauser.Utils {
         [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
         static extern bool CloseHandle(IntPtr handle);
 
-        public static void SuspendProcess(Process process) {
+
+        public void Suspend(IEnumerable<IProcessInfo> processInfos) {
+            foreach (var process in processInfos) {
+                this.SuspendProcess(process.Process);
+            }
+        }
+
+        public void Resume(IEnumerable<IProcessInfo> processInfos) {
+            foreach (var process in processInfos) {
+                this.ResumeProcess(process.Process);
+            }
+        }
+
+        private void SuspendProcess(Process process) {
             foreach (ProcessThread pT in process.Threads) {
-                IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
+                var pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
 
                 if (pOpenThread == IntPtr.Zero) {
                     continue;
@@ -43,15 +58,16 @@ namespace Pauser.Utils {
             }
         }
 
-        public static void ResumeProcess(Process process) {
+        private void ResumeProcess(Process process) {
             foreach (ProcessThread pT in process.Threads) {
-                IntPtr pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
+                var pOpenThread = OpenThread(ThreadAccess.SUSPEND_RESUME, false, (uint)pT.Id);
 
                 if (pOpenThread == IntPtr.Zero) {
                     continue;
                 }
 
-                var suspendCount = 0;
+                int suspendCount;
+
                 do {
                     suspendCount = ResumeThread(pOpenThread);
                 } while (suspendCount > 0);
@@ -59,5 +75,6 @@ namespace Pauser.Utils {
                 CloseHandle(pOpenThread);
             }
         }
+
     }
 }

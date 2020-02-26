@@ -49,12 +49,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logic\Interfaces\IAdapter.cs" />
-    <Compile Include="Logic\Interfaces\IAdaptersProvider.cs" />
+    <Compile Include="Logic\Implementations\AdapterInfo.cs" />
+    <Compile Include="Logic\Implementations\AdapterControl.cs" />
+    <Compile Include="Logic\Implementations\AdapterProvider.cs" />
+    <Compile Include="Logic\Implementations\Filter.cs" />
+    <Compile Include="Logic\Implementations\FilterProvider.cs" />
+    <Compile Include="Logic\Implementations\Options.cs" />
+    <Compile Include="Logic\Implementations\ProcessInfo.cs" />
+    <Compile Include="Logic\Implementations\ProcessControl.cs" />
+    <Compile Include="Logic\Implementations\ProcessProvider.cs" />
+    <Compile Include="Logic\Interfaces\IAdapterInfo.cs" />
+    <Compile Include="Logic\Interfaces\IAdapterInfoProvider.cs" />
     <Compile Include="Logic\Interfaces\IFilter.cs" />
-    <Compile Include="Logic\Interfaces\IFiltersProvider.cs" />
-    <Compile Include="Logic\Interfaces\IProcess.cs" />
-    <Compile Include="Logic\IProcessesProvider.cs" />
+    <Compile Include="Logic\Interfaces\IFilterProvider.cs" />
+    <Compile Include="Logic\Interfaces\IProcessInfo.cs" />
+    <Compile Include="Logic\Interfaces\IProcessProvider.cs" />
     <Compile Include="UI\ControlCombined.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -85,12 +94,9 @@
     <Compile Include="UI\CommandLink.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Logic\Interfaces\IAdaptersControl.cs" />
-    <Compile Include="Logic\Interfaces\IProcessesControl.cs" />
-    <Compile Include="UI\Options.cs" />
-    <Compile Include="UI\Saved.cs" />
-    <Compile Include="Utils\Network.cs" />
-    <Compile Include="Utils\Processes.cs" />
+    <Compile Include="Logic\Interfaces\IAdapterControl.cs" />
+    <Compile Include="Logic\Interfaces\IProcessControl.cs" />
+    <Compile Include="Logic\Saved.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="UI\ControlCombined.resx">
@@ -143,8 +149,6 @@
   <ItemGroup>
     <None Include="Resources\power-on.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Logic\Implementations\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

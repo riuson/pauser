@@ -1,13 +1,17 @@
 ﻿using NUnit.Framework;
-using Pauser.Utils;
+using Pauser.Logic.Implementations;
+using Pauser.Logic.Interfaces;
+using System.Linq;
 using System.Net.NetworkInformation;
+using System.Threading;
 
 namespace GamePauserTests {
     class NetworkTest {
         [Test]
         public void CanFindAdapters() {
-            var adapters = Network.GetAdapters();
-            Assert.That(adapters.Length, Is.GreaterThan(0));
+            IAdapterInfoProvider adapterProvider = new AdapterProvider();
+            var adapters = adapterProvider.FromSystem();
+            Assert.That(adapters.Count(), Is.GreaterThan(0));
         }
 
         private bool CheckPing() {
@@ -29,16 +33,24 @@ namespace GamePauserTests {
 
         [Test]
         public void CanControlAdapter() {
+            IAdapterControl adapterControl = new AdapterControl();
+            IAdapterInfoProvider adapterProvider = new AdapterProvider();
+            var adapterInfo = adapterProvider.FromSystem()
+                .FirstOrDefault(x => x.DeviceId == "4"); // Main adapter on my PC.
+
             var result = this.CheckPing();
             Assert.That(result, Is.True);
 
-            Network.DisableAdapter("4");
+            adapterControl.Disable(adapterInfo);
+
+            Thread.Sleep(5000);
 
             result = this.CheckPing();
             Assert.That(result, Is.False);
 
+            adapterControl.Enable(adapterInfo);
 
-            Network.EnableAdapter("4");
+            Thread.Sleep(5000);
 
             result = this.CheckPing();
             Assert.That(result, Is.True);

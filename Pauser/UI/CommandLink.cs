@@ -52,7 +52,7 @@ namespace Pauser.UI {
 
         public string Description {
             get {
-                int length = Convert.ToInt32(SendMessage(new HandleRef(this, this.Handle),
+                var length = Convert.ToInt32(SendMessage(new HandleRef(this, this.Handle),
                                  BCM_GETNOTELENGTH,
                                  IntPtr.Zero, IntPtr.Zero)) + 1;
 
@@ -73,7 +73,7 @@ namespace Pauser.UI {
 
         public void SetImage(Bitmap bitmap) {
             if (bitmap != null) {
-                IntPtr iconHandle = bitmap.GetHicon();
+                var iconHandle = bitmap.GetHicon();
                 SendMessage(new HandleRef(this, this.Handle),
                     BM_SETIMAGE,
                     (IntPtr)1,

@@ -1,4 +1,6 @@
 ﻿using NUnit.Framework;
+using Pauser.Logic.Implementations;
+using Pauser.Logic.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -74,11 +76,15 @@ namespace GamePauserTests {
             };
 
             var process = new Process { StartInfo = startInfo };
+
+            IProcessProvider processesProvider = new ProcessProvider();
+            var filters = new IFilter[] { new Filter() { Enabled = true, Value = this._appname } };
+
             var started = process.Start();
-            var processes = Process.GetProcessesByName(_appname);
+            var processes = processesProvider.Find(filters);
 
             Assert.That(started, Is.True);
-            Assert.That(processes.Length, Is.GreaterThan(0));
+            Assert.That(processes.Count(), Is.GreaterThan(0));
 
             process.Kill();
         }
@@ -114,10 +120,16 @@ namespace GamePauserTests {
 
             var process = new Process { StartInfo = startInfo };
 
+            IProcessControl processControl = new ProcessControl();
+            IProcessProvider processProvider = new ProcessProvider();
+            var filters = new IFilter[] { new Filter() { Enabled = true, Value = this._appname} };
+
             var started = process.Start();
             var outputReader = process.StandardOutput;
 
             Assert.That(started, Is.True);
+
+            var processInfos = processProvider.Find(filters);
 
             var list = new List<DateTime>();
             var needRead = true;
@@ -134,10 +146,10 @@ namespace GamePauserTests {
             });
 
             Thread.Sleep(200);
-            Pauser.Utils.Processes.SuspendProcess(process);
+            processControl.Suspend(processInfos);
             Thread.Sleep(2000);
             var stopTime = DateTime.Now;
-            Pauser.Utils.Processes.ResumeProcess(process);
+            processControl.Resume(processInfos);
             Thread.Sleep(200);
             needRead = false;
             task.Wait();
