@@ -33,22 +33,26 @@ namespace GamePauserTests {
 
         [Test]
         public void CanControlAdapter() {
-            IAdapterControl adapterControl = new AdapterControl();
             IAdapterProvider adapterProvider = new AdapterProvider();
+            IAdapterActual adapterActual = new AdapterActual(adapterProvider);
+            IAdapterControl adapterControl = new AdapterControl(adapterActual);
             var adapterInfo = adapterProvider.FromSystem()
                 .FirstOrDefault(x => x.DeviceId == "4"); // Main adapter on my PC.
+
+            adapterInfo.Selected = true;
+            adapterActual.Adapters.Add(adapterInfo);
 
             var result = this.CheckPing();
             Assert.That(result, Is.True);
 
-            adapterControl.Disable(adapterInfo);
+            adapterControl.Disable();
 
             Thread.Sleep(5000);
 
             result = this.CheckPing();
             Assert.That(result, Is.False);
 
-            adapterControl.Enable(adapterInfo);
+            adapterControl.Enable();
 
             Thread.Sleep(5000);
 

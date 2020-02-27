@@ -1,11 +1,30 @@
 ﻿using Pauser.Logic.Interfaces;
 using System;
+using System.Linq;
 using System.Management;
 using System.Windows.Forms;
 
 namespace Pauser.Logic.Implementations {
     public class AdapterControl : IAdapterControl {
-        public void Enable(IAdapter adapter) {
+        private readonly IAdapterActual _adapterActual;
+
+        public AdapterControl(IAdapterActual adapterActual) {
+            this._adapterActual = adapterActual;
+        }
+
+        public void Enable() {
+            foreach (var adapter in this._adapterActual.Adapters.Where(x => x.Selected)) {
+                this.Enable(adapter);
+            }
+        }
+
+        public void Disable() {
+            foreach (var adapter in this._adapterActual.Adapters.Where(x => x.Selected)) {
+                this.Disable(adapter);
+            }
+        }
+
+        private void Enable(IAdapter adapter) {
             try {
                 var classInstance =
                     new ManagementObject("root\\CIMV2",
@@ -20,7 +39,7 @@ namespace Pauser.Logic.Implementations {
             }
         }
 
-        public void Disable(IAdapter adapter) {
+        private void Disable(IAdapter adapter) {
             try {
                 var classInstance =
                     new ManagementObject("root\\CIMV2",

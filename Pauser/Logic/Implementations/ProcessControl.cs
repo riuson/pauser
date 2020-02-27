@@ -2,10 +2,12 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.InteropServices;
 
 namespace Pauser.Logic.Implementations {
     public class ProcessControl : IProcessControl {
+        #region WinAPI
         [Flags]
         private enum ThreadAccess : int {
             TERMINATE = (0x0001),
@@ -30,15 +32,35 @@ namespace Pauser.Logic.Implementations {
 
         [DllImport("kernel32", CharSet = CharSet.Auto, SetLastError = true)]
         static extern bool CloseHandle(IntPtr handle);
+        #endregion
 
+        private readonly IProcessProvider _processProvider;
+        private readonly IFilterActual _filterActual;
 
-        public void Suspend(IEnumerable<IProcessInfo> processInfos) {
+        public ProcessControl(IProcessProvider processProvider, IFilterActual filterActual) {
+            this._processProvider = processProvider;
+            this._filterActual = filterActual;
+        }
+
+        public void Suspend() {
+            var filters = this._filterActual.Filters;
+            var processes = this._processProvider.Find(filters);
+            this.Suspend(processes);
+        }
+
+        public void Resume() {
+            var filters = this._filterActual.Filters;
+            var processes = this._processProvider.Find(filters);
+            this.Resume(processes);
+        }
+
+        private void Suspend(IEnumerable<IProcessInfo> processInfos) {
             foreach (var process in processInfos) {
                 this.SuspendProcess(process.Process);
             }
         }
 
-        public void Resume(IEnumerable<IProcessInfo> processInfos) {
+        private void Resume(IEnumerable<IProcessInfo> processInfos) {
             foreach (var process in processInfos) {
                 this.ResumeProcess(process.Process);
             }
@@ -75,6 +97,5 @@ namespace Pauser.Logic.Implementations {
                 CloseHandle(pOpenThread);
             }
         }
-
     }
 }

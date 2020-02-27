@@ -2,26 +2,22 @@
 using Pauser.Properties;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace Pauser.UI {
     public partial class ControlProcesses : UserControl {
         private readonly IFilterActual _filterActual;
-        private readonly IFilterProvider _filterProvider;
         private readonly IProcessProvider _processProvider;
         private readonly IProcessControl _processControl;
         private readonly BindingList<IProcessInfo> _processes;
 
         public ControlProcesses(
             IFilterActual filterActual,
-            IFilterProvider filterProvider,
             IProcessProvider processProvider,
             IProcessControl processControl) {
             this.InitializeComponent();
 
             this._filterActual = filterActual;
-            this._filterProvider = filterProvider;
             this._processProvider = processProvider;
             this._processControl = processControl;
             this._processes = new BindingList<IProcessInfo>();
@@ -75,20 +71,8 @@ namespace Pauser.UI {
             this.dataGridViewResults.DataSource = this._processes;
         }
 
-        public void Suspend() {
-            var filters = this._filterActual.Filters
-                .Where(x => x.Enabled)
-                .ToArray();
-            var processInfos = this._processProvider.Find(filters);
-            this._processControl.Suspend(processInfos);
-        }
+        public void Suspend() => this._processControl.Suspend();
 
-        public void Resume() {
-            var filters = this._filterActual.Filters
-                .Where(x => x.Enabled)
-                .ToArray();
-            var processInfos = this._processProvider.Find(filters);
-            this._processControl.Resume(processInfos);
-        }
+        public void Resume() => this._processControl.Resume();
     }
 }

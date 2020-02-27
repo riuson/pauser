@@ -1,103 +1,51 @@
 ﻿using Pauser.Logic.Interfaces;
 using System;
 using System.Drawing;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Message = System.Tuple<int, string>;
 
 namespace Pauser.UI {
     public partial class ControlCombined : UserControl {
-        private readonly IAdapterActual _adapterActual;
-        private readonly IAdapterControl _adapterControl;
-        private readonly IAdapterProvider _adapterInfoProvider;
-        private readonly IFilterActual _filterActual;
-        private readonly IFilterProvider _filterProvider;
-        private readonly IProcessProvider _processProvider;
-        private readonly IProcessControl _processControl;
-        private Task _task;
+        private readonly IBatchOperationControl _batchOperationControl;
+        private readonly IBatchOperationActual _batchOperationActual;
         private IProgress<Message> _progress;
+        private CommandLink _commandStart;
 
         public ControlCombined(
-            IAdapterActual adapterActual,
-            IAdapterControl adapterControl,
-            IAdapterProvider adapterInfoProvider,
-            IFilterActual filterActual,
-            IFilterProvider filterProvider,
-            IProcessProvider processProvider,
-            IProcessControl processControl) {
-            this._adapterActual = adapterActual;
-            this._adapterControl = adapterControl;
-            this._adapterInfoProvider = adapterInfoProvider;
-            this._filterActual = filterActual;
-            this._filterProvider = filterProvider;
-            this._processProvider = processProvider;
-            this._processControl = processControl;
+            IBatchOperationControl batchOperationControl,
+            IBatchOperationActual batchOperationActual) {
+            this._batchOperationControl = batchOperationControl;
+            this._batchOperationActual = batchOperationActual;
             this.InitializeComponent();
             this.CreateUI();
         }
 
         private void CreateUI() {
-            var commandStart = new CommandLink {
+            this._commandStart = new CommandLink {
                 Text = "Start",
                 Description = "Execute required operations now!",
                 Anchor = AnchorStyles.Left | AnchorStyles.Right,
                 Size = new Size(250, 70)
             };
-            commandStart.Click += this.StartSequence;
-            this.tableLayoutPanel1.Controls.Add(commandStart, 1, 1);
+            this._commandStart.Click += this.StartSequence;
+            this.tableLayoutPanel1.Controls.Add(this._commandStart, 1, 0);
 
             this._progress = new Progress<Message>(this.ProgressHandler);
 
-            this.progressBar.Maximum = 6;
+            this.ColumnOperation.DataSource = Enum.GetValues(typeof(Operation));
+            this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.DataSource = this._batchOperationActual.Operations;
         }
 
-        private void BeforeDisposing() {
-            //throw new NotImplementedException();
-        }
-
-        private void StartSequence(object sender, EventArgs e) {
-            //var filters = 
-            this._task = Task.Factory.StartNew(this.Sequence);
-        }
-
-        private void Sequence() {
-            var filters = this._filterActual.Filters;
-            var processInfos = this._processProvider.Find(filters);
-
-            this._progress.Report(new Message(1, "Suspending processes..."));
-
-            this._processControl.Suspend(processInfos);
-            var adapterInfos = this._adapterActual.Adapters.Where(x => x.Selected);
-
-            this._progress.Report(new Message(2, "Disabling network adapters..."));
-
-            foreach (var adapterInfo in adapterInfos) {
-                this._adapterControl.Disable(adapterInfo);
-            }
-
-            this._progress.Report(new Message(3, "Resuming processes..."));
-
-            this._processControl.Resume(processInfos);
-
-            this._progress.Report(new Message(4, "Waiting 10 seconds..."));
-
-            Thread.Sleep(10000);
-
-            this._progress.Report(new Message(5, "Enabling network adapters..."));
-
-            foreach (var adapterInfo in adapterInfos) {
-                this._adapterControl.Enable(adapterInfo);
-            }
-
-            this._progress.Report(new Message(6, "Completed."));
-
+        private async void StartSequence(object sender, EventArgs e) {
+            this._commandStart.Enabled = false;
+            await this._batchOperationControl.ExecuteAsync();
+            this._commandStart.Enabled = true;
         }
 
         private void ProgressHandler(Message msg) {
-            this.progressBar.Value = msg.Item1;
-            this.labelStatus.Text = msg.Item2;
+            //this.progressBar.Value = msg.Item1;
+            //this.labelStatus.Text = msg.Item2;
         }
     }
 }

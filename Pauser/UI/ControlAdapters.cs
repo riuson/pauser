@@ -48,19 +48,11 @@ namespace Pauser.UI {
         }
 
         private void EnableAdapters(object sender, EventArgs e) {
-            var adapters = this.CollectSelectedAdapters();
-
-            foreach (var adapter in adapters) {
-                this._adapterControl.Enable(adapter);
-            }
+            this._adapterControl.Enable();
         }
 
         private void DisableAdapters(object sender, EventArgs e) {
-            var adapters = this.CollectSelectedAdapters();
-
-            foreach (var adapter in adapters) {
-                this._adapterControl.Disable(adapter);
-            }
+            this._adapterControl.Disable();
         }
 
         private IEnumerable<IAdapter> CollectSelectedAdapters() =>

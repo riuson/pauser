@@ -53,8 +53,12 @@
     <Compile Include="Logic\Implementations\Adapter.cs" />
     <Compile Include="Logic\Implementations\AdapterControl.cs" />
     <Compile Include="Logic\Implementations\AdapterProvider.cs" />
+    <Compile Include="Logic\Implementations\BatchOperaion.cs" />
+    <Compile Include="Logic\Implementations\BatchOperationActual.cs" />
+    <Compile Include="Logic\Implementations\BatchOperationControl.cs" />
     <Compile Include="Logic\Implementations\Filter.cs" />
     <Compile Include="Logic\Implementations\FilterActual.cs" />
+    <Compile Include="Logic\Implementations\BatchOperationProvider.cs" />
     <Compile Include="Logic\Implementations\FilterProvider.cs" />
     <Compile Include="Logic\Implementations\Options.cs" />
     <Compile Include="Logic\Implementations\ProcessInfo.cs" />
@@ -63,8 +67,12 @@
     <Compile Include="Logic\Interfaces\IAdapterActual.cs" />
     <Compile Include="Logic\Interfaces\IAdapter.cs" />
     <Compile Include="Logic\Interfaces\IAdapterProvider.cs" />
+    <Compile Include="Logic\Interfaces\IBatchOperation.cs" />
+    <Compile Include="Logic\Interfaces\IBatchOperationActual.cs" />
+    <Compile Include="Logic\Interfaces\IBatchOperationControl.cs" />
     <Compile Include="Logic\Interfaces\IFilter.cs" />
     <Compile Include="Logic\Interfaces\IFIlterActual.cs" />
+    <Compile Include="Logic\Interfaces\IBatchOperationProvider.cs" />
     <Compile Include="Logic\Interfaces\IFilterProvider.cs" />
     <Compile Include="Logic\Interfaces\IProcessInfo.cs" />
     <Compile Include="Logic\Interfaces\IProcessProvider.cs" />

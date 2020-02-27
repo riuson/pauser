@@ -16,6 +16,9 @@ namespace Pauser.UI {
         private IAdapterControl _adapterControl;
         private IProcessProvider _processProvider;
         private IProcessControl _processControl;
+        private IBatchOperationControl _batchOperationControl;
+        private IBatchOperationProvider _batchOperationProvider;
+        private IBatchOperationActual _batchOperationActual;
 
         public FormMain() {
             InitializeComponent();
@@ -42,12 +45,20 @@ namespace Pauser.UI {
             this._filterActual.LoadSettings();
 
             this._adapterInfoProvider = new AdapterProvider();
-            this._adapterControl = new AdapterControl();
             this._adapterActual = new AdapterActual(this._adapterInfoProvider);
             this._adapterActual.LoadSettings();
+            this._adapterControl = new AdapterControl(this._adapterActual);
 
             this._processProvider = new ProcessProvider();
-            this._processControl = new ProcessControl();
+            this._processControl = new ProcessControl(this._processProvider, this._filterActual);
+
+            this._batchOperationProvider = new BatchOperationProvider();
+            this._batchOperationActual = new BatchOperationActual(this._batchOperationProvider);
+            this._batchOperationActual.LoadSettings();
+            this._batchOperationControl = new BatchOperationControl(
+                this._adapterControl,
+                this._processControl,
+                this._batchOperationActual);
         }
 
         private void CreateNetworksUI() {
@@ -65,7 +76,6 @@ namespace Pauser.UI {
             this.tabControlMain.TabPages.Add(page);
             this._controlProcesses = new ControlProcesses(
                 this._filterActual,
-                this._filterProvider,
                 this._processProvider,
                 this._processControl);
             page.Controls.Add(this._controlProcesses);
@@ -76,13 +86,8 @@ namespace Pauser.UI {
             var page = new TabPage("Batch");
             this.tabControlMain.TabPages.Add(page);
             this._controlCombined = new ControlCombined(
-                this._adapterActual,
-                this._adapterControl,
-                this._adapterInfoProvider,
-                this._filterActual,
-                this._filterProvider,
-                this._processProvider,
-                this._processControl);
+                this._batchOperationControl,
+                this._batchOperationActual);
             page.Controls.Add(this._controlCombined);
             this._controlCombined.Dock = DockStyle.Fill;
         }
@@ -90,6 +95,7 @@ namespace Pauser.UI {
         private void FormMain_FormClosing(object sender, FormClosingEventArgs e) {
             this._filterActual.SaveSettings();
             this._adapterActual.SaveSettings();
+            this._batchOperationActual.SaveSettings();
         }
     }
 }

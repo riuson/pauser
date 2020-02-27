@@ -120,16 +120,17 @@ namespace GamePauserTests {
 
             var process = new Process { StartInfo = startInfo };
 
-            IProcessControl processControl = new ProcessControl();
+            IFilterProvider filterProvider = new FilterProvider();
+            IFilterActual filterActual = new FilterActual(filterProvider);
             IProcessProvider processProvider = new ProcessProvider();
-            var filters = new IFilter[] { new Filter() { Enabled = true, Value = this._appname} };
+            IProcessControl processControl = new ProcessControl(processProvider, filterActual);
+
+            filterActual.Filters.Add(new Filter() {Enabled = true, Value = this._appname});
 
             var started = process.Start();
             var outputReader = process.StandardOutput;
 
             Assert.That(started, Is.True);
-
-            var processInfos = processProvider.Find(filters);
 
             var list = new List<DateTime>();
             var needRead = true;
@@ -146,10 +147,10 @@ namespace GamePauserTests {
             });
 
             Thread.Sleep(200);
-            processControl.Suspend(processInfos);
+            processControl.Suspend();
             Thread.Sleep(2000);
             var stopTime = DateTime.Now;
-            processControl.Resume(processInfos);
+            processControl.Resume();
             Thread.Sleep(200);
             needRead = false;
             task.Wait();
