@@ -34,6 +34,8 @@ namespace Pauser.Logic.Implementations {
         }
 
         private void ExecuteOperation(IBatchOperation operation) {
+            this.ReportProgress(operation);
+
             switch (operation.Operation) {
                 case Operation.DisableNetworks: {
                         this._adaptersControl.Disable();
