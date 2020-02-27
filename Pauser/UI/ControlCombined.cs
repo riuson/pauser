@@ -49,6 +49,8 @@ namespace Pauser.UI {
             this.tableLayoutPanel1.Controls.Add(commandStart, 1, 1);
 
             this._progress = new Progress<Message>(this.ProgressHandler);
+
+            this.progressBar.Maximum = 6;
         }
 
         private void BeforeDisposing() {
@@ -63,20 +65,34 @@ namespace Pauser.UI {
         private void Sequence() {
             var filters = this._filterActual.Filters;
             var processInfos = this._processProvider.Find(filters);
+
+            this._progress.Report(new Message(1, "Suspending processes..."));
+
             this._processControl.Suspend(processInfos);
             var adapterInfos = this._adapterActual.Adapters.Where(x => x.Selected);
+
+            this._progress.Report(new Message(2, "Disabling network adapters..."));
 
             foreach (var adapterInfo in adapterInfos) {
                 this._adapterControl.Disable(adapterInfo);
             }
 
+            this._progress.Report(new Message(3, "Resuming processes..."));
+
             this._processControl.Resume(processInfos);
 
+            this._progress.Report(new Message(4, "Waiting 10 seconds..."));
+
             Thread.Sleep(10000);
+
+            this._progress.Report(new Message(5, "Enabling network adapters..."));
 
             foreach (var adapterInfo in adapterInfos) {
                 this._adapterControl.Enable(adapterInfo);
             }
+
+            this._progress.Report(new Message(6, "Completed."));
+
         }
 
         private void ProgressHandler(Message msg) {
