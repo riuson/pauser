@@ -6,7 +6,9 @@ using System.Linq;
 namespace Pauser.Logic.Implementations {
     public class ProcessProvider : IProcessProvider {
         public IEnumerable<IProcessInfo> Find(IEnumerable<IFilter> filters) {
-            var names = filters.Select(x => x.Value).ToArray();
+            var names = filters
+                .Where(x => x.Enabled)
+                .Select(x => x.Value).ToArray();
 
             var processes = Process.GetProcesses()
                 .Where(x => names.Contains(x.ProcessName))

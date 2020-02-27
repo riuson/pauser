@@ -1,6 +1,6 @@
 ﻿namespace Pauser.Logic.Interfaces {
     public interface IAdapterControl {
-        void Enable(IAdapterInfo adapter);
-        void Disable(IAdapterInfo adapter);
+        void Enable(IAdapter adapter);
+        void Disable(IAdapter adapter);
     }
 }

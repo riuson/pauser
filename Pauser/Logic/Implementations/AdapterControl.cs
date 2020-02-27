@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Pauser.Logic.Implementations {
     public class AdapterControl : IAdapterControl {
-        public void Enable(IAdapterInfo adapter) {
+        public void Enable(IAdapter adapter) {
             try {
                 var classInstance =
                     new ManagementObject("root\\CIMV2",
@@ -20,7 +20,7 @@ namespace Pauser.Logic.Implementations {
             }
         }
 
-        public void Disable(IAdapterInfo adapter) {
+        public void Disable(IAdapter adapter) {
             try {
                 var classInstance =
                     new ManagementObject("root\\CIMV2",

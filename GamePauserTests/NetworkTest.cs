@@ -9,7 +9,7 @@ namespace GamePauserTests {
     class NetworkTest {
         [Test]
         public void CanFindAdapters() {
-            IAdapterInfoProvider adapterProvider = new AdapterInfoProvider();
+            IAdapterProvider adapterProvider = new AdapterProvider();
             var adapters = adapterProvider.FromSystem();
             Assert.That(adapters.Count(), Is.GreaterThan(0));
         }
@@ -34,7 +34,7 @@ namespace GamePauserTests {
         [Test]
         public void CanControlAdapter() {
             IAdapterControl adapterControl = new AdapterControl();
-            IAdapterInfoProvider adapterProvider = new AdapterInfoProvider();
+            IAdapterProvider adapterProvider = new AdapterProvider();
             var adapterInfo = adapterProvider.FromSystem()
                 .FirstOrDefault(x => x.DeviceId == "4"); // Main adapter on my PC.
 

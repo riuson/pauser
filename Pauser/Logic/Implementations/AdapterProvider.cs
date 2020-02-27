@@ -6,16 +6,16 @@ using System.Management;
 using System.Windows.Forms;
 
 namespace Pauser.Logic.Implementations {
-    public class AdapterInfoProvider : IAdapterInfoProvider {
-        public IEnumerable<IAdapterInfo> FromStorage() => Saved<Options>.Instance.IAdapters;
+    public class AdapterProvider : IAdapterProvider {
+        public IEnumerable<IAdapter> FromStorage() => Saved<Options>.Instance.IAdapters;
 
-        public void ToStorage(IEnumerable<IAdapterInfo> list) {
-            Saved<Options>.Instance.IAdapters = list?.ToArray() ?? new IAdapterInfo[] { };
+        public void ToStorage(IEnumerable<IAdapter> list) {
+            Saved<Options>.Instance.IAdapters = list?.ToArray() ?? new IAdapter[] { };
             Saved<Options>.Save();
         }
 
-        public IEnumerable<IAdapterInfo> FromSystem() {
-            var result = new List<IAdapterInfo>();
+        public IEnumerable<IAdapter> FromSystem() {
+            var result = new List<IAdapter>();
 
             try {
                 var searcher =
@@ -27,7 +27,7 @@ namespace Pauser.Logic.Implementations {
                     Console.WriteLine("DeviceID: {0}", queryObj["DeviceID"]);
                     Console.WriteLine("Name: {0}", queryObj["Name"]);
                     Console.WriteLine("NetConnectionID: {0}", queryObj["NetConnectionID"]);
-                    result.Add(new AdapterInfo() {
+                    result.Add(new Adapter() {
                         Name = Convert.ToString(queryObj["Name"]),
                         Description = Convert.ToString(queryObj["Description"]),
                         DeviceId = Convert.ToString(queryObj["DeviceID"]),

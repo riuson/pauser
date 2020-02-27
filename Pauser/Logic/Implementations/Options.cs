@@ -5,25 +5,25 @@ using System.Xml.Serialization;
 
 namespace Pauser.Logic.Implementations {
     public class Options {
-        private AdapterInfo[] _adapters;
+        private Adapter[] _adapters;
         private Filter[] _filters;
 
         public Options() {
-            this.Adapters = new AdapterInfo[] { };
+            this.Adapters = new Adapter[] { };
             this.Filters = new Filter[] { };
         }
 
         [XmlElement("Adapters")]
-        public AdapterInfo[] Adapters {
+        public Adapter[] Adapters {
             get => this._adapters;
             set => this._adapters = value;
         }
 
         [XmlIgnore]
-        public IEnumerable<IAdapterInfo> IAdapters {
-            get => this._adapters?.Cast<IAdapterInfo>() ?? new IAdapterInfo[] { };
+        public IEnumerable<IAdapter> IAdapters {
+            get => this._adapters?.Cast<IAdapter>() ?? new IAdapter[] { };
             set => this._adapters = value
-                   .Select(x => new AdapterInfo(x))
+                   .Select(x => new Adapter(x))
                    .ToArray();
         }
 

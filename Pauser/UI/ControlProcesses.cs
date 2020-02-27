@@ -1,44 +1,36 @@
-﻿using Pauser.Logic.Implementations;
-using Pauser.Logic.Interfaces;
+﻿using Pauser.Logic.Interfaces;
 using Pauser.Properties;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 
 namespace Pauser.UI {
     public partial class ControlProcesses : UserControl {
-        private readonly BindingList<IFilter> _filters;
+        private readonly IFilterActual _filterActual;
+        private readonly IFilterProvider _filterProvider;
+        private readonly IProcessProvider _processProvider;
+        private readonly IProcessControl _processControl;
         private readonly BindingList<IProcessInfo> _processes;
 
-        public ControlProcesses() {
+        public ControlProcesses(
+            IFilterActual filterActual,
+            IFilterProvider filterProvider,
+            IProcessProvider processProvider,
+            IProcessControl processControl) {
             this.InitializeComponent();
 
-            this._filters = new BindingList<IFilter> {
-                AllowNew = true,
-                AllowRemove = true,
-                AllowEdit = true
-            };
-            this._filters.AddingNew += this._filters_AddingNew;
+            this._filterActual = filterActual;
+            this._filterProvider = filterProvider;
+            this._processProvider = processProvider;
+            this._processControl = processControl;
             this._processes = new BindingList<IProcessInfo>();
             this.CreateUI();
-            this.LoadSettings();
             this.FillProcesses();
         }
 
-        private void _filters_AddingNew(object sender, AddingNewEventArgs e) {
-            e.NewObject = new Filter();
-        }
-
-        private void BeforeDisposing() => this.SaveSettings();
-
         private void FillProcesses() {
-            var filters = this._filters.Where(x => x.Enabled).ToArray();
-            IProcessProvider processProvider = new ProcessProvider();
-
-            var processInfos = processProvider.Find(filters);
-
+            var processInfos = this._processProvider.Find(this._filterActual.Filters);
             this._processes.Clear();
 
             foreach (var processInfo in processInfos) {
@@ -78,42 +70,25 @@ namespace Pauser.UI {
             this.tableLayoutPanel1.Controls.Add(commandRefresh, 1, 2);
 
             this.dataGridViewFilters.AutoGenerateColumns = false;
-            this.dataGridViewFilters.DataSource = this._filters;
+            this.dataGridViewFilters.DataSource = this._filterActual.Filters;
             this.dataGridViewResults.AutoGenerateColumns = false;
             this.dataGridViewResults.DataSource = this._processes;
         }
 
         public void Suspend() {
-            var filters = this._filters.Where(x => x.Enabled).ToArray();
-            IProcessControl processControl = new ProcessControl();
-            IProcessProvider processProvider = new ProcessProvider();
-            var processInfos = processProvider.Find(filters);
-            processControl.Suspend(processInfos);
+            var filters = this._filterActual.Filters
+                .Where(x => x.Enabled)
+                .ToArray();
+            var processInfos = this._processProvider.Find(filters);
+            this._processControl.Suspend(processInfos);
         }
 
         public void Resume() {
-            var filters = this._filters.Where(x => x.Enabled).ToArray();
-            IProcessControl processControl = new ProcessControl();
-            IProcessProvider processProvider = new ProcessProvider();
-            var processInfos = processProvider.Find(filters);
-            processControl.Resume(processInfos);
-        }
-
-        private void LoadSettings() {
-            IFilterProvider filterProvider = new FilterProvider();
-            var filters = filterProvider.FromStorage();
-
-            this._filters.Clear();
-
-            foreach (var filter in filters) {
-                this._filters.Add(filter);
-            }
-        }
-
-        public void SaveSettings() {
-            var list = this._filters.ToArray();
-            IFilterProvider filterProvider = new FilterProvider();
-            filterProvider.ToStorage(list);
+            var filters = this._filterActual.Filters
+                .Where(x => x.Enabled)
+                .ToArray();
+            var processInfos = this._processProvider.Find(filters);
+            this._processControl.Resume(processInfos);
         }
     }
 }

@@ -49,18 +49,22 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Logic\Implementations\AdapterInfo.cs" />
+    <Compile Include="Logic\Implementations\AdapterActual.cs" />
+    <Compile Include="Logic\Implementations\Adapter.cs" />
     <Compile Include="Logic\Implementations\AdapterControl.cs" />
-    <Compile Include="Logic\Implementations\AdapterInfoProvider.cs" />
+    <Compile Include="Logic\Implementations\AdapterProvider.cs" />
     <Compile Include="Logic\Implementations\Filter.cs" />
+    <Compile Include="Logic\Implementations\FilterActual.cs" />
     <Compile Include="Logic\Implementations\FilterProvider.cs" />
     <Compile Include="Logic\Implementations\Options.cs" />
     <Compile Include="Logic\Implementations\ProcessInfo.cs" />
     <Compile Include="Logic\Implementations\ProcessControl.cs" />
     <Compile Include="Logic\Implementations\ProcessProvider.cs" />
-    <Compile Include="Logic\Interfaces\IAdapterInfo.cs" />
-    <Compile Include="Logic\Interfaces\IAdapterInfoProvider.cs" />
+    <Compile Include="Logic\Interfaces\IAdapterActual.cs" />
+    <Compile Include="Logic\Interfaces\IAdapter.cs" />
+    <Compile Include="Logic\Interfaces\IAdapterProvider.cs" />
     <Compile Include="Logic\Interfaces\IFilter.cs" />
+    <Compile Include="Logic\Interfaces\IFIlterActual.cs" />
     <Compile Include="Logic\Interfaces\IFilterProvider.cs" />
     <Compile Include="Logic\Interfaces\IProcessInfo.cs" />
     <Compile Include="Logic\Interfaces\IProcessProvider.cs" />

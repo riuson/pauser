@@ -49,6 +49,7 @@
             this.Name = "FormMain";
             this.Padding = new System.Windows.Forms.Padding(3);
             this.Text = "Pauser";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormMain_FormClosing);
             this.ResumeLayout(false);
 
         }

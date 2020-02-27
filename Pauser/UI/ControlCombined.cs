@@ -1,18 +1,39 @@
-﻿using System;
+﻿using Pauser.Logic.Interfaces;
+using System;
 using System.Drawing;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Pauser.Logic.Implementations;
-using Pauser.Logic.Interfaces;
 using Message = System.Tuple<int, string>;
 
 namespace Pauser.UI {
     public partial class ControlCombined : UserControl {
+        private readonly IAdapterActual _adapterActual;
+        private readonly IAdapterControl _adapterControl;
+        private readonly IAdapterProvider _adapterInfoProvider;
+        private readonly IFilterActual _filterActual;
+        private readonly IFilterProvider _filterProvider;
+        private readonly IProcessProvider _processProvider;
+        private readonly IProcessControl _processControl;
         private Task _task;
         private IProgress<Message> _progress;
 
-        public ControlCombined() {
+        public ControlCombined(
+            IAdapterActual adapterActual,
+            IAdapterControl adapterControl,
+            IAdapterProvider adapterInfoProvider,
+            IFilterActual filterActual,
+            IFilterProvider filterProvider,
+            IProcessProvider processProvider,
+            IProcessControl processControl) {
+            this._adapterActual = adapterActual;
+            this._adapterControl = adapterControl;
+            this._adapterInfoProvider = adapterInfoProvider;
+            this._filterActual = filterActual;
+            this._filterProvider = filterProvider;
+            this._processProvider = processProvider;
+            this._processControl = processControl;
             this.InitializeComponent();
             this.CreateUI();
         }
@@ -40,27 +61,21 @@ namespace Pauser.UI {
         }
 
         private void Sequence() {
-            IAdapterInfoProvider adapterInfoProvider = new AdapterInfoProvider();
-            IAdapterControl adapterControl = new AdapterControl();
-            IFilterProvider filterProvider = new FilterProvider();
-            IProcessProvider processProvider = new ProcessProvider();
-            IProcessControl processControl = new ProcessControl();
-
-            var filters = filterProvider.FromStorage();
-            var processInfos = processProvider.Find(filters);
-            processControl.Suspend(processInfos);
-            var adapterInfos = adapterInfoProvider.FromStorage();
+            var filters = this._filterActual.Filters;
+            var processInfos = this._processProvider.Find(filters);
+            this._processControl.Suspend(processInfos);
+            var adapterInfos = this._adapterActual.Adapters.Where(x => x.Selected);
 
             foreach (var adapterInfo in adapterInfos) {
-                adapterControl.Disable(adapterInfo);
+                this._adapterControl.Disable(adapterInfo);
             }
 
-            processControl.Resume(processInfos);
+            this._processControl.Resume(processInfos);
 
             Thread.Sleep(10000);
 
             foreach (var adapterInfo in adapterInfos) {
-                adapterControl.Enable(adapterInfo);
+                this._adapterControl.Enable(adapterInfo);
             }
         }
 
